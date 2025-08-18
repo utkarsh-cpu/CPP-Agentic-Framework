@@ -1,5 +1,5 @@
 #include "BaseNode.h"
-
+#include "ConditionalTransition.h"
 #include <iostream>
 using namespace std;
 

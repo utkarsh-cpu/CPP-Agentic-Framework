@@ -6,7 +6,8 @@
 
 #include<map>
 
-#include "ConditionalTransition.h"
+class ConditionalTransition;
+
 using namespace std;
 
 class BaseNode {

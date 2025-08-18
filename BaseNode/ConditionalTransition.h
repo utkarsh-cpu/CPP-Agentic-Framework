@@ -5,7 +5,9 @@
 #ifndef CONDITIONALTRANSITION_H
 #define CONDITIONALTRANSITION_H
 
-#include "BaseNode.h"
+#include <memory>
+#include <string>
+
 class BaseNode;
 
 

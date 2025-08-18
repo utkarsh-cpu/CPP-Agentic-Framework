@@ -6,6 +6,8 @@
 
 #include <utility>
 
+#include "BaseNode.h"
+
 ConditionalTransition::ConditionalTransition(BaseNode *s, std::string  a):src(s),action(std::move(a)) {}
 
 std::shared_ptr<BaseNode> ConditionalTransition::operator>>(const std::shared_ptr<BaseNode>& tgt) const {
