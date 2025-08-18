@@ -1,6 +1,6 @@
 # CPP-Agentic-Framework
 
-A modern C++20 framework for building asynchronous, batch-processing, and workflow-based applications. This framework provides a flexible architecture for creating complex processing pipelines with support for synchronous and asynchronous execution, batch operations, and parallel processing.
+A modern C++17 framework for building asynchronous, batch-processing, and workflow-based applications. This framework provides a flexible architecture for creating complex processing pipelines with support for synchronous and asynchronous execution, batch operations, and parallel processing.
 
 ## Features
 

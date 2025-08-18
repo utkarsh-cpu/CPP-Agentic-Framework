@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 3.30)
-project(agentic_framework)
+cmake_minimum_required(VERSION 3.20)
+project(agentic_framework VERSION 1.0.0)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(agentic_framework STATIC BaseNode/BaseNode.cpp
         Node/Node.cpp
