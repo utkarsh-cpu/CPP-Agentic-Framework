@@ -14,7 +14,16 @@ std::shared_ptr<BaseNode> Flow::Start(std::shared_ptr<BaseNode> start) {
 }
 
 std::shared_ptr<BaseNode> Flow::GetNextNode(const std::shared_ptr<BaseNode>& curr, const string &action) {
-    const auto it=curr->getSuccessor().find(action.empty()?"default":action);
+    /*START_USER_CODE*/
+    if (!curr) {
+        std::cerr << "Error: current node is null" << std::endl;
+        return nullptr;
+    }
+    
+    const auto& successors = curr->getSuccessor();
+    const std::string lookup_key = action.empty() ? "default" : action;
+    const auto it = successors.find(lookup_key);
+    /*END_USER_CODE*/
     if (it==curr->getSuccessor().end() && !curr->getSuccessor().empty()) {
         std::cerr<< "Flow ends: '" << action << "'not found in the successors" << std::endl;
         return nullptr;
