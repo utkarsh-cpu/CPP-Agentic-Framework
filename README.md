@@ -40,8 +40,49 @@ A modern C++20 framework for building asynchronous, batch-processing, and workfl
 
 The framework follows a hierarchical inheritance model:
 ```
-BaseNode ├── Node │ ├── BatchNode │ │ └── AsyncParallelBatchNode (+ AsyncNode) │ └── AsyncNode │ └── AsyncBatchNode (+ BatchNode) └── Flow (+ BaseNode) ├── BatchFlow (+ Flow) ├── AsyncFlow (+ Flow + AsyncNode) ├── AsyncBatchFlow (+ AsyncFlow + BatchFlow) └── AsyncParallelBatchFlow (+ AsyncFlow + BatchFlow)
+BaseNode (Abstract Base) ├── Node (Basic Processing Unit) │ ├── AsyncNode (Asynchronous Processing) │ │ ├── AsyncBatchNode (AsyncNode + BatchNode) │ │ └── AsyncParallelBatchNode (AsyncNode + BatchNode) │ └── BatchNode (Batch Processing) │ ├── AsyncBatchNode (AsyncNode + BatchNode) │ └── AsyncParallelBatchNode (AsyncNode + BatchNode) │ └── Flow (Workflow Orchestration) ├── AsyncFlow (Flow + AsyncNode) │ ├── AsyncBatchFlow (AsyncFlow + BatchFlow) │ └── AsyncParallelBatchFlow (AsyncFlow + BatchFlow) └── BatchFlow (Flow + Batch Processing) ├── AsyncBatchFlow (AsyncFlow + BatchFlow) └── AsyncParallelBatchFlow (AsyncFlow + BatchFlow)
 ```
+
+## Execution Models
+
+### Synchronous Models
+```
+BaseNode → Node → BatchNode BaseNode → Flow → BatchFlow
+```
+### Asynchronous Models
+```
+BaseNode → Node → AsyncNode BaseNode → Flow → AsyncFlow
+
+```
+
+### Hybrid Models (Multiple Inheritance)
+```
+AsyncBatchNode: AsyncNode + BatchNode 
+AsyncParallelBatchNode: AsyncNode + BatchNode (with parallel execution) 
+AsyncBatchFlow: AsyncFlow + BatchFlow AsyncParallelBatchFlow: AsyncFlow + BatchFlow (with parallel execution)
+```
+
+
+## Key Design Patterns
+
+### 1. **Virtual Inheritance**
+Used to prevent diamond inheritance problems in complex hierarchies:
+- `Flow` uses virtual inheritance from `BaseNode`
+- `AsyncFlow` uses virtual inheritance from both `Flow` and `AsyncNode`
+
+### 2. **Multiple Inheritance**
+Combines orthogonal capabilities:
+- Async + Batch functionality
+- Flow + Node capabilities
+- Parallel + Batch processing
+
+### 3. **Template-like Flexibility**
+Different combinations provide specialized behavior:
+- **Sequential**: Standard processing
+- **Async**: Non-blocking operations
+- **Batch**: Collection processing
+- **Parallel**: Concurrent execution
+
 ## Building
 
 This project uses CMake for building:
@@ -52,36 +93,72 @@ cd build
 cmake ..
 make
 ```
+
 ### Requirements
+
 - C++20 compatible compiler
 - CMake 3.30 or later
 
-## Usage Examples
-### Basic Synchronous Workflow
-``` cpp
-// Create nodes and connect them in a flow
-auto flow = std::make_shared<Flow>();
-// Configure your workflow nodes
+## Usage Patterns
+
+### Basic Node Processing
+```cpp
+// Single item processing
+auto node = std::make_shared<Node>();
+std::any result = node->Run(data);
+
+// Batch processing
+auto batchNode = std::make_shared<BatchNode>();
+std::any batchResult = batchNode->Run(batchData);
 ```
+
 ### Asynchronous Processing
-``` cpp
-// Use AsyncFlow for non-blocking operations
+```cpp
+// Async single processing
+auto asyncNode = std::make_shared<AsyncNode>();
+std::future<std::any> result = asyncNode->RunAsync(data);
+
+// Async batch processing
+auto asyncBatchNode = std::make_shared<AsyncBatchNode>();
+std::future<std::any> batchResult = asyncBatchNode->RunAsync(batchData);
+```
+
+### Workflow Orchestration
+```cpp
+// Synchronous workflow
+auto flow = std::make_shared<Flow>();
+std::any result = flow->run(data);
+
+// Asynchronous workflow
 auto asyncFlow = std::make_shared<AsyncFlow>();
 std::future<std::any> result = asyncFlow->runAsync(data);
+
+// Parallel batch workflow
+auto parallelFlow = std::make_shared<AsyncParallelBatchFlow>();
+std::future<std::any> result = parallelFlow->runAsync(batchData);
 ```
-### Batch Processing
-``` cpp
-// Process collections of data efficiently
-auto batchFlow = std::make_shared<BatchFlow>();
-std::vector<std::any> batchData = {/* your data */};
-auto result = batchFlow->run(batchData);
-```
-### Parallel Batch Processing
-``` cpp
-// Process batches in parallel for maximum performance
-auto parallelBatchFlow = std::make_shared<AsyncParallelBatchFlow>();
-std::future<std::any> result = parallelBatchFlow->runAsync(batchData);
-```
+
+## Component Capabilities Matrix
+
+| Component | Sync | Async | Batch | Parallel | Workflow |
+|-----------|------|-------|-------|----------|----------|
+| Node | ✓ | ✗ | ✗ | ✗ | ✗ |
+| AsyncNode | ✓ | ✓ | ✗ | ✗ | ✗ |
+| BatchNode | ✓ | ✗ | ✓ | ✗ | ✗ |
+| AsyncBatchNode | ✓ | ✓ | ✓ | ✗ | ✗ |
+| AsyncParallelBatchNode | ✓ | ✓ | ✓ | ✓ | ✗ |
+| Flow | ✓ | ✗ | ✗ | ✗ | ✓ |
+| AsyncFlow | ✓ | ✓ | ✗ | ✗ | ✓ |
+| BatchFlow | ✓ | ✗ | ✓ | ✗ | ✓ |
+| AsyncBatchFlow | ✓ | ✓ | ✓ | ✗ | ✓ |
+| AsyncParallelBatchFlow | ✓ | ✓ | ✓ | ✓ | ✓ |
+
+## Thread Safety
+
+- Async operations use `std::async` with `std::launch::async` policy
+- Parallel batch processing safely handles concurrent execution
+- Share
+
 ## Key Concepts
 ### Data Flow
 The framework uses for flexible data passing between nodes, allowing for type-safe operations while maintaining flexibility. `std::any`
@@ -115,8 +192,9 @@ This framework is designed to be extensible. You can:
 - Add new execution patterns by combining existing interfaces
 
 ## License
-[Include your license information here]
+[[LICENSE](LICENSE)]
 ## Dependencies
 - Standard C++20 library
 - Threading support (, `<async>`) `<future>`
 - Type utilities (, `<typeinfo>`) `<any>`
+
