@@ -5,7 +5,7 @@
 #include "AsyncFlow.h"
 
 std::future<std::any> AsyncFlow::orchAsync(std::any &shared, const std::map<std::string, std::any> *Params) {
-    return std::async(std::launch::async, [this,Params,shared]()-> std::any {
+    return std::async(std::launch::async, [this,Params,&shared]()-> std::any {
         auto curr = startNode;
         const auto p= Params? *Params : Flow::params;
         std::any lastAction;
@@ -24,7 +24,7 @@ std::future<std::any> AsyncFlow::orchAsync(std::any &shared, const std::map<std:
 }
 
 std::future<std::any> AsyncFlow::runAsync(std::any &shared) {
-    return std::async(std::launch::async, [this,shared]()-> std::any {
+    return std::async(std::launch::async, [this,&shared]()-> std::any {
         std::any Prep=PrepAsync(shared).get();
         std::any Exec=orchAsync(shared).get();
         return PostAsync(shared,Prep,Exec).get();
@@ -36,4 +36,8 @@ std::future<std::any> AsyncFlow::PostAsync(std::any& shared,std::any& PrepRes,st
     return std::async(std::launch::async, [this,ExecRes]()-> std::any {
         return ExecRes;
     });
+}
+
+std::any AsyncFlow::run(std::any& shared) {
+    throw std::runtime_error("Use run_async instead of run for AsyncFlow.");
 }

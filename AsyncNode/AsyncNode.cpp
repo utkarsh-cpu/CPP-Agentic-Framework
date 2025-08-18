@@ -24,7 +24,7 @@ std::future<std::any> AsyncNode::ExecFallbackAsync(std::any &PrepRes, const exce
 }
 
 std::future<std::any> AsyncNode::runAsync(std::any &shared) {
-    return std::async(std::launch::async, [this,shared]()-> std::any {
+    return std::async(std::launch::async, [this,&shared]()-> std::any {
         auto p = PrepAsync(shared).get();
         auto e=exec(p);
         return PostAsync(shared,p,e).get();
@@ -39,7 +39,7 @@ std::future<std::any> AsyncNode::RunAsync(std::any &shared) {
 }
 
 std::any AsyncNode::exec(std::any &PrepRes) {
-    return std::async(std::launch::async, [this, PrepRes]() -> std::any {
+    return std::async(std::launch::async, [this, &PrepRes]() -> std::any {
         for (int i = 0; i < max_retries; i++) {
             try {
                 auto futureResult = ExecAsync(PrepRes);

@@ -13,7 +13,8 @@ public:
     using AsyncFlow::AsyncFlow;
     using BatchFlow::BatchFlow;
 private:
-    std::future<std::any> runAsync(std::any &shared) override;;
+    std::future<std::any> runAsync(std::any &shared) override;
+    std::any run(std::any& shared) override;
 
 };
 

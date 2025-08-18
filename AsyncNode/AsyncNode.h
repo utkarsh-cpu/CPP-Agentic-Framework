@@ -8,7 +8,7 @@
 #include "../Node/Node.h"
 #include <future>
 
-class AsyncNode: public Node{
+class AsyncNode: virtual public Node{
 public:
     using Node::Node;
     std::future<std::any> PrepAsync(std::any& shared);

@@ -24,4 +24,6 @@ add_library(agentic_framework STATIC BaseNode/BaseNode.cpp
         AsyncFlow/AsyncFlow.h
         AsyncBatchFlow/AsyncBatchFlow.cpp
         AsyncBatchFlow/AsyncBatchFlow.h
+        AsyncParallelBatchFlow/AsyncParallelBatchFlow.h
+        AsyncParallelBatchFlow/AsyncParallelBatchFlow.cpp
 )

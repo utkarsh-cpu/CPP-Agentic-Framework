@@ -7,11 +7,12 @@
 
 #include "../Flow/Flow.h"
 
-class BatchFlow: public Flow{
+class BatchFlow:  virtual public Flow{
     public:
     using Flow::Flow;
     private:
     std::any run(std::any& shared) override;
+    std::any Post(std::any& shared,std::any& PrepRes,std::any& ExecRes) override;
 };
 
 

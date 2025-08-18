@@ -7,7 +7,7 @@
 
 #include "../BaseNode/BaseNode.h"
 
-class Node : public BaseNode{
+class Node : virtual public BaseNode{
 protected:
     int max_retries;
     int wait;

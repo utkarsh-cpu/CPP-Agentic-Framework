@@ -19,3 +19,7 @@ std::any BatchFlow::run(std::any &shared) {
     std::any ExecRes = nullptr;
     return Post(shared, PrepRes,ExecRes );
 }
+
+std::any BatchFlow::Post(std::any &shared,std::any &PrepRes,std::any &ExecRes) {
+    return Flow::Post(shared,PrepRes,ExecRes);
+}

@@ -5,7 +5,7 @@
 #include "AsyncBatchFlow.h"
 
 std::future<std::any> AsyncBatchFlow::runAsync(std::any &shared) {
-    return std::async(std::launch::async, [this,shared]()-> std::any {
+    return std::async(std::launch::async, [this,&shared]()-> std::any {
         std::any Prep=PrepAsync(shared).get();
         if (!Prep.has_value() || Prep.type()!=typeid(std::vector<std::any>)) {
             std::any exec={};
@@ -20,6 +20,12 @@ std::future<std::any> AsyncBatchFlow::runAsync(std::any &shared) {
             Params.insert(extras.begin(), extras.end());
             orchAsync(shared,&Params).get();
         }
+        std::any ExecRes = nullptr;
+        return PostAsync(shared, Prep,ExecRes ).get();
     });
 
 };
+
+std::any AsyncBatchFlow::run(std::any& shared) {
+    throw std::runtime_error("Use run_async instead of run for AsyncBatchFlow.");
+}

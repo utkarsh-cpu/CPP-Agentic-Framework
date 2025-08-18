@@ -7,7 +7,7 @@
 
 #include "../BaseNode/BaseNode.h"
 
-class Flow: public BaseNode {
+class Flow: virtual public BaseNode {
 protected:
     std::shared_ptr<BaseNode> startNode;
 public:
