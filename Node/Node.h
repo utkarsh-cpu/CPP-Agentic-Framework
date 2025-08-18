@@ -12,12 +12,17 @@ protected:
     int max_retries;
     int wait;
     int cur_retry;
+
 public:
     explicit Node(int max_retries=1,int wait=0);
-    virtual std::any exec_fallback(const std::any& PrepRes,const::exception & exc);
-private:
-    std::any exec(any &PrepRes) override;
+    virtual ~Node() = default;
 
+    // Virtual method for inheritance customization
+    virtual std::any exec_fallback(const std::any& PrepRes,const std::exception & exc);
+
+protected:
+    // Protected virtual method for derived class override
+    std::any exec(any &PrepRes) override;
 
 };
 

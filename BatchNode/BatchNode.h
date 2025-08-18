@@ -8,10 +8,13 @@
 #include "../Node/Node.h"
 #include<vector>
 
-class BatchNode:public Node{
+class BatchNode: virtual public Node{
 public:
     using Node::Node;
-private:
+    virtual ~BatchNode() = default;
+
+protected:
+    // Protected virtual method for derived class customization
     std::any exec(any &items) override;
 };
 

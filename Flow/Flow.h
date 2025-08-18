@@ -10,15 +10,20 @@
 class Flow: virtual public BaseNode {
 protected:
     std::shared_ptr<BaseNode> startNode;
+
 public:
     explicit Flow(std::shared_ptr<BaseNode> StartNode=nullptr);
-    std::shared_ptr<BaseNode> Start(std::shared_ptr<BaseNode> start);
+    virtual ~Flow() = default;
+
+    // Virtual methods for inheritance customization
+    virtual std::shared_ptr<BaseNode> Start(std::shared_ptr<BaseNode> start);
     static std::shared_ptr<BaseNode> GetNextNode(const std::shared_ptr<BaseNode>& curr,const string &action);
     std::any Post(std::any& shared,std::any& PrepRes,std::any& ExecRes) override;
     virtual std::any orch(std::any& shared,std::map<std::string,std::any>*Params=nullptr);
-private:
-    std::any run(std::any& shared) override;
 
+protected:
+    // Protected virtual method for derived class customization
+    std::any run(std::any& shared) override;
 
 };
 
