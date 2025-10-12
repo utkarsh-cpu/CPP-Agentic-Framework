@@ -3,25 +3,24 @@
 //
 
 #include "BatchFlow.h"
+#include "../BatchNode/VectorData.h"
+#include "MapData.h"
 
-std::any BatchFlow::run(std::any &shared) {
+std::shared_ptr<FrameworkData> BatchFlow::run(std::shared_ptr<FrameworkData> shared) {
     auto PrepRes = Prep(shared);
-    std::vector<std::any> batch_params;
-    if (PrepRes.has_value() && PrepRes.type() == typeid(std::vector<std::any>)) {
-         batch_params = std::any_cast<std::vector<std::any> >(PrepRes);
-    }
-    for (const auto &bp:batch_params) {
-        std::map<string, std::any> params=this->params;
-        if (bp.has_value() && bp.type() == typeid(std::map<std::string, std::any>)) {
-            auto extras=std::any_cast<std::map<std::string, std::any>>(bp);
-            params.insert(extras.begin(), extras.end());
+    if (auto vecData = std::dynamic_pointer_cast<VectorData>(PrepRes)) {
+        for (const auto &bp:vecData->value) {
+            auto params = this->params;
+            if (auto mapData = std::dynamic_pointer_cast<MapData>(bp)) {
+                params.insert(mapData->value.begin(), mapData->value.end());
+            }
+            orch(shared,params);
         }
-        orch(shared,&params);
     }
-    std::any ExecRes = nullptr;
+    std::shared_ptr<FrameworkData> ExecRes = nullptr;
     return Post(shared, PrepRes,ExecRes );
 }
 
-std::any BatchFlow::Post(std::any &shared,std::any &PrepRes,std::any &ExecRes) {
+std::shared_ptr<FrameworkData> BatchFlow::Post(std::shared_ptr<FrameworkData> shared,std::shared_ptr<FrameworkData> PrepRes,std::shared_ptr<FrameworkData> ExecRes) {
     return Flow::Post(shared,PrepRes,ExecRes);
 }

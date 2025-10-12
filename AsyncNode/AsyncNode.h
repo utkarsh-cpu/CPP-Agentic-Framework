@@ -14,21 +14,19 @@ public:
     virtual ~AsyncNode() = default;
 
     // Virtual async methods for inheritance customization
-    virtual std::future<std::any> PrepAsync(std::any& shared);
-    virtual std::future<std::any> ExecAsync(std::any& PrepRes);
-    virtual std::future<std::any> ExecFallbackAsync(std::any& PrepRes,const std::exception& exc);
-    virtual std::future<std::any> PostAsync(std::any& shared,std::any& PrepRes,std::any& ExecRes);
-    virtual std::future<std::any> RunAsync(std::any& shared);
-    std::any Execute(std::any& shared) override;
+    virtual std::future<std::shared_ptr<FrameworkData>> PrepAsync(std::shared_ptr<FrameworkData> shared);
+    virtual std::future<std::shared_ptr<FrameworkData>> ExecAsync(std::shared_ptr<FrameworkData> PrepRes);
+    virtual std::future<std::shared_ptr<FrameworkData>> ExecFallbackAsync(std::shared_ptr<FrameworkData> PrepRes,const std::exception& exc);
+    virtual std::future<std::shared_ptr<FrameworkData>> PostAsync(std::shared_ptr<FrameworkData> shared,std::shared_ptr<FrameworkData> PrepRes,std::shared_ptr<FrameworkData> ExecRes);
+    virtual std::future<std::shared_ptr<FrameworkData>> RunAsync(std::shared_ptr<FrameworkData> shared);
+    std::shared_ptr<FrameworkData> Execute(std::shared_ptr<FrameworkData> shared) override;
 
 protected:
     // Protected virtual methods for derived class customization
-    virtual std::future<std::any> runAsync(std::any& shared);
-    std::any exec(std::any& PrepRes) override;
-    std::any run(std::any& shared) override;
+    virtual std::future<std::shared_ptr<FrameworkData>> runAsync(std::shared_ptr<FrameworkData> shared);
+    std::shared_ptr<FrameworkData> exec(std::shared_ptr<FrameworkData> PrepRes) override;
+    std::shared_ptr<FrameworkData> run(std::shared_ptr<FrameworkData> shared) override;
 
 };
-
-
 
 #endif //ASYNCNODE_H

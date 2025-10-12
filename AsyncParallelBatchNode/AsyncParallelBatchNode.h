@@ -5,16 +5,13 @@
 #ifndef ASYNCPARALLELBATCHNODE_H
 #define ASYNCPARALLELBATCHNODE_H
 #include "../AsyncNode/AsyncNode.h"
-#include "../BatchNode/BatchNode.h"
 
 
-class AsyncParallelBatchNode: public AsyncNode,public BatchNode{
+class AsyncParallelBatchNode: public AsyncNode{
 private:
-    std::any exec(std::any &items) override;
+    std::shared_ptr<FrameworkData> exec(std::shared_ptr<FrameworkData> items) override;
 
 
 };
-
-
 
 #endif //ASYNCPARALLELBATCHNODE_H

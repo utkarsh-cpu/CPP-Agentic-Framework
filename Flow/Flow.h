@@ -6,6 +6,7 @@
 #define FLOW_H
 
 #include "../BaseNode/BaseNode.h"
+#include "StringData.h"
 
 class Flow: virtual public BaseNode {
 protected:
@@ -17,16 +18,14 @@ public:
 
     // Virtual methods for inheritance customization
     virtual std::shared_ptr<BaseNode> Start(std::shared_ptr<BaseNode> start);
-    static std::shared_ptr<BaseNode> GetNextNode(const std::shared_ptr<BaseNode>& curr,const string &action);
-    std::any Post(std::any& shared,std::any& PrepRes,std::any& ExecRes) override;
-    virtual std::any orch(std::any& shared,std::map<std::string,std::any>*Params=nullptr);
+    static std::shared_ptr<BaseNode> GetNextNode(const std::shared_ptr<BaseNode>& curr,const std::string &action);
+    std::shared_ptr<FrameworkData> Post(std::shared_ptr<FrameworkData> shared, std::shared_ptr<FrameworkData> PrepRes, std::shared_ptr<FrameworkData> ExecRes) override;
+    virtual std::shared_ptr<FrameworkData> orch(std::shared_ptr<FrameworkData> shared, const std::map<std::string, std::shared_ptr<FrameworkData>>& Params = {});
 
 protected:
     // Protected virtual method for derived class customization
-    std::any run(std::any& shared) override;
+    std::shared_ptr<FrameworkData> run(std::shared_ptr<FrameworkData> shared) override;
 
 };
-
-
 
 #endif //FLOW_H

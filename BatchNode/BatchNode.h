@@ -6,6 +6,7 @@
 #define BATCHNODE_H
 
 #include "../Node/Node.h"
+#include "VectorData.h"
 #include<vector>
 
 class BatchNode: virtual public Node{
@@ -15,9 +16,7 @@ public:
 
 protected:
     // Protected virtual method for derived class customization
-    std::any exec(any &items) override;
+    std::shared_ptr<FrameworkData> exec(std::shared_ptr<FrameworkData> items) override;
 };
-
-
 
 #endif //BATCHNODE_H

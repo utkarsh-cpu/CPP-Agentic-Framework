@@ -9,23 +9,22 @@
 
 class Node : virtual public BaseNode{
 protected:
-    int max_retries;
-    int wait;
     int cur_retry;
 
 public:
+    int max_retries;
+    int wait;
+
     explicit Node(int max_retries=1,int wait=0);
     virtual ~Node() = default;
 
     // Virtual method for inheritance customization
-    virtual std::any exec_fallback(const std::any& PrepRes,const std::exception & exc);
+    virtual std::shared_ptr<FrameworkData> exec_fallback(const std::shared_ptr<FrameworkData>& PrepRes, std::exception_ptr eptr);
 
 protected:
     // Protected virtual method for derived class override
-    std::any exec(any &PrepRes) override;
+    std::shared_ptr<FrameworkData> exec(std::shared_ptr<FrameworkData> PrepRes) override;
 
 };
-
-
 
 #endif //NODE_H

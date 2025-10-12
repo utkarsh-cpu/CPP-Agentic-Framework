@@ -3,18 +3,20 @@
 //
 
 #include "AsyncParallelBatchNode.h"
+#include "../BatchNode/VectorData.h"
 
-std::any AsyncParallelBatchNode::exec(std::any &items) {
-   std::vector<std::any> results;
-   std::vector<std::future<std::any>> futures;
-   if (items.has_value()) {
-      for (auto itemsVec = std::any_cast<std::vector<std::any>>(items); auto &item : itemsVec) {
-         futures.push_back(AsyncNode::ExecAsync(item));
-      }
-   }
-   results.reserve(futures.size());
-   for (auto &future : futures) {
-      results.push_back(future.get());
+std::shared_ptr<FrameworkData> AsyncParallelBatchNode::exec(std::shared_ptr<FrameworkData> items) {
+   auto results = std::make_shared<VectorData>();
+   if (auto vecData = std::dynamic_pointer_cast<VectorData>(items)) {
+       std::vector<std::future<std::shared_ptr<FrameworkData>>> futures;
+       futures.reserve(vecData->value.size());
+       for (auto &item : vecData->value) {
+           futures.push_back(AsyncNode::ExecAsync(item));
+       }
+       results->value.reserve(futures.size());
+       for (auto &future : futures) {
+           results->value.push_back(future.get());
+       }
    }
    return results;
 }

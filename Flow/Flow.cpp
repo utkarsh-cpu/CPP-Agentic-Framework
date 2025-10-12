@@ -1,7 +1,3 @@
-//
-// Created by Utkarsh Kaushik on 09/05/25.
-//
-
 #include "Flow.h"
 
 #include <iostream>
@@ -13,7 +9,7 @@ std::shared_ptr<BaseNode> Flow::Start(std::shared_ptr<BaseNode> start) {
     return start;
 }
 
-std::shared_ptr<BaseNode> Flow::GetNextNode(const std::shared_ptr<BaseNode>& curr, const string &action) {
+std::shared_ptr<BaseNode> Flow::GetNextNode(const std::shared_ptr<BaseNode>& curr, const std::string &action) {
     /*START_USER_CODE*/
     if (!curr) {
         std::cerr << "Error: current node is null" << std::endl;
@@ -31,27 +27,25 @@ std::shared_ptr<BaseNode> Flow::GetNextNode(const std::shared_ptr<BaseNode>& cur
     return it!=curr->getSuccessor().end()?it->second:nullptr;
 }
 
-std::any Flow::orch(std::any &shared, std::map<std::string, std::any> *Params) {
+std::shared_ptr<FrameworkData> Flow::orch(std::shared_ptr<FrameworkData> shared, const std::map<std::string, std::shared_ptr<FrameworkData>> &Params) {
     auto curr = startNode;
-    const auto p= Params? *Params : this->params;
+    const auto& p = Params.empty() ? this->params : Params;
     std::string lastAction;
     while (curr) {
         try {
             curr->setParam(p);
 
-            std::any runResult = curr->Run(shared);
+            auto runResult = curr->Run(shared);
 
-            // Safely cast to string with error checking
-            if (runResult.type() == typeid(std::string)) {
-                lastAction = std::any_cast<std::string>(runResult);
-            } else if (runResult.type() == typeid(const char*)) {
-                lastAction = std::any_cast<const char*>(runResult);
+            if (auto stringData = std::dynamic_pointer_cast<StringData>(runResult)) {
+                lastAction = stringData->value;
             } else {
-                std::cerr << "Error: Run() did not return a string or const char*. Type: " << runResult.type().name() << std::endl;
-                return std::string("error");
+                std::cerr << "Error: Run() did not return a StringData object." << std::endl;
+                auto errorData = std::make_shared<StringData>();
+                errorData->value = "error";
+                return errorData;
             }
 
-            // Check if curr is still valid before calling GetNextNode
             if (!curr) {
                 std::cerr << "Current node became null during execution" << std::endl;
                 break;
@@ -61,21 +55,27 @@ std::any Flow::orch(std::any &shared, std::map<std::string, std::any> *Params) {
 
         } catch (const std::exception& e) {
             std::cerr << "Exception in Flow::orch: " << e.what() << std::endl;
-            return std::string("error");
+            auto errorData = std::make_shared<StringData>();
+            errorData->value = "error";
+            return errorData;
         } catch (...) {
             std::cerr << "Unknown exception in Flow::orch" << std::endl;
-            return std::string("error");
+            auto errorData = std::make_shared<StringData>();
+            errorData->value = "error";
+            return errorData;
         }
     }
-    return lastAction;
+    auto resultData = std::make_shared<StringData>();
+    resultData->value = lastAction;
+    return resultData;
 }
 
-std::any Flow::run(std::any &shared) {
+std::shared_ptr<FrameworkData> Flow::run(std::shared_ptr<FrameworkData> shared) {
     auto PrepRes= Prep(shared);
     auto ExecRes= orch(shared);
     return Post(shared,PrepRes,ExecRes);
 }
 
-std::any Flow::Post(std::any &shared,std::any &PrepRes,std::any &ExecRes) {
+std::shared_ptr<FrameworkData> Flow::Post(std::shared_ptr<FrameworkData> shared,std::shared_ptr<FrameworkData> PrepRes,std::shared_ptr<FrameworkData> ExecRes) {
     return ExecRes;
 }

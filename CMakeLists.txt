@@ -43,6 +43,10 @@ target_sources(agentic_framework PUBLIC
     FILES
         BaseNode/BaseNode.h
         BaseNode/ConditionalTransition.h
+        BaseNode/FrameworkData.h
+        Flow/StringData.h
+        BatchNode/VectorData.h
+        BatchFlow/MapData.h
         Node/Node.h
         BatchNode/BatchNode.h
         Flow/Flow.h
@@ -137,3 +141,24 @@ install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/agentic_frameworkConfigVersion.cmake"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/agentic_framework
 )
+
+# Google Test
+
+enable_testing()
+
+add_subdirectory(third_party/googletest)
+
+add_executable(run_tests)
+
+target_sources(run_tests PRIVATE
+    tests/NodeTests.cpp
+    tests/FlowTests.cpp
+)
+
+target_link_libraries(run_tests PRIVATE
+    agentic_framework
+    GTest::gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(run_tests)

@@ -5,19 +5,16 @@
 #ifndef ASYNCPARALLELBATCHFLOW_H
 #define ASYNCPARALLELBATCHFLOW_H
 #include "../AsyncFlow/AsyncFlow.h"
-#include "../BatchFlow/BatchFlow.h"
 
 
-class AsyncParallelBatchFlow: virtual public AsyncFlow, virtual public BatchFlow{
+class AsyncParallelBatchFlow: virtual public AsyncFlow {
 public:
     using AsyncFlow::AsyncFlow;
-    using BatchFlow::BatchFlow;
+    std::shared_ptr<FrameworkData> Post(std::shared_ptr<FrameworkData> shared,std::shared_ptr<FrameworkData> PrepRes,std::shared_ptr<FrameworkData> ExecRes) override;
 private:
-    std::future<std::any> runAsync(std::any &shared) override;
-    std::any run(std::any& shared) override;
+    std::future<std::shared_ptr<FrameworkData>> runAsync(std::shared_ptr<FrameworkData> shared) override;
+    std::shared_ptr<FrameworkData> run(std::shared_ptr<FrameworkData> shared) override;
 
 };
-
-
 
 #endif //ASYNCPARALLELBATCHFLOW_H

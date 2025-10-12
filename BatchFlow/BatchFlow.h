@@ -11,10 +11,8 @@ class BatchFlow:  virtual public Flow{
     public:
     using Flow::Flow;
     private:
-    std::any run(std::any& shared) override;
-    std::any Post(std::any& shared,std::any& PrepRes,std::any& ExecRes) override;
+    std::shared_ptr<FrameworkData> run(std::shared_ptr<FrameworkData> shared) override;
+    std::shared_ptr<FrameworkData> Post(std::shared_ptr<FrameworkData> shared,std::shared_ptr<FrameworkData> PrepRes,std::shared_ptr<FrameworkData> ExecRes) override;
 };
-
-
 
 #endif //BATCHFLOW_H

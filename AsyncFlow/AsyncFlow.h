@@ -11,18 +11,16 @@
 
 class AsyncFlow: virtual public Flow, virtual public AsyncNode{
 protected:
-    std::future<std::any> orchAsync(std::any& shared,const std::map<std::string,std::any>*Params=nullptr);
+    std::future<std::shared_ptr<FrameworkData>> orchAsync(std::shared_ptr<FrameworkData> shared,const std::map<std::string,std::shared_ptr<FrameworkData>>& Params = {});
     std::mutex shared_mutex;
 public:
     using Flow::Flow;
     using AsyncNode::AsyncNode;
-    std::future<std::any> PostAsync(std::any& shared,std::any& PrepRes,std::any& ExecRes) override;
+    std::future<std::shared_ptr<FrameworkData>> PostAsync(std::shared_ptr<FrameworkData> shared,std::shared_ptr<FrameworkData> PrepRes,std::shared_ptr<FrameworkData> ExecRes) override;
 private:
-    std::future<std::any> runAsync(std::any &shared) override;
-    std::any run(std::any& shared) override;
+    std::future<std::shared_ptr<FrameworkData>> runAsync(std::shared_ptr<FrameworkData> shared) override;
+    std::shared_ptr<FrameworkData> run(std::shared_ptr<FrameworkData> shared) override;
 
 };
-
-
 
 #endif //ASYNCFLOW_H

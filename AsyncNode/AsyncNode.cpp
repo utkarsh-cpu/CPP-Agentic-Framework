@@ -7,44 +7,44 @@
 #include <iostream>
 
 
-std::future<std::any> AsyncNode::PrepAsync(std::any &shared) {
-    return std::async(std::launch::async, []() -> std::any { return {}; });
+std::future<std::shared_ptr<FrameworkData>> AsyncNode::PrepAsync(std::shared_ptr<FrameworkData> shared) {
+    return std::async(std::launch::async, []() -> std::shared_ptr<FrameworkData> { return nullptr; });
 }
 
-std::future<std::any> AsyncNode::ExecAsync(std::any &PrepRes) {
-    return std::async(std::launch::async, []() -> std::any { return {}; });
+std::future<std::shared_ptr<FrameworkData>> AsyncNode::ExecAsync(std::shared_ptr<FrameworkData> PrepRes) {
+    return std::async(std::launch::async, []() -> std::shared_ptr<FrameworkData> { return nullptr; });
 }
 
-std::future<std::any> AsyncNode::PostAsync(std::any& shared,std::any &PrepRes,std::any& ExecRes) {
-    return std::async(std::launch::async, []() -> std::any { return {}; });
+std::future<std::shared_ptr<FrameworkData>> AsyncNode::PostAsync(std::shared_ptr<FrameworkData> shared,std::shared_ptr<FrameworkData> PrepRes,std::shared_ptr<FrameworkData> ExecRes) {
+    return std::async(std::launch::async, []() -> std::shared_ptr<FrameworkData> { return nullptr; });
 }
 
-std::future<std::any> AsyncNode::ExecFallbackAsync(std::any &PrepRes, const exception &exc) {
-    return std::async(std::launch::async, [&exc]() -> std::any { throw exc; });
+std::future<std::shared_ptr<FrameworkData>> AsyncNode::ExecFallbackAsync(std::shared_ptr<FrameworkData> PrepRes, const std::exception &exc) {
+    return std::async(std::launch::async, [&exc]() -> std::shared_ptr<FrameworkData> { throw exc; });
 }
 
-std::future<std::any> AsyncNode::runAsync(std::any &shared) {
-    return std::async(std::launch::async, [this,&shared]()-> std::any {
+std::future<std::shared_ptr<FrameworkData>> AsyncNode::runAsync(std::shared_ptr<FrameworkData> shared) {
+    return std::async(std::launch::async, [this,shared]()-> std::shared_ptr<FrameworkData> {
         auto p = PrepAsync(shared).get();
         auto e=exec(p);
         return PostAsync(shared,p,e).get();
     });
 }
 
-std::future<std::any> AsyncNode::RunAsync(std::any &shared) {
+std::future<std::shared_ptr<FrameworkData>> AsyncNode::RunAsync(std::shared_ptr<FrameworkData> shared) {
     if (!successors.empty()) {
         std::cerr << "Warning: Node will not run successors, Use AsyncFlow instead"<< std::endl;
     }
     return runAsync(shared);
 }
 
-std::any AsyncNode::exec(std::any &PrepRes) {
-    return std::async(std::launch::async, [this, &PrepRes]() -> std::any {
+std::shared_ptr<FrameworkData> AsyncNode::exec(std::shared_ptr<FrameworkData> PrepRes) {
+    return std::async(std::launch::async, [this, PrepRes]() -> std::shared_ptr<FrameworkData> {
         for (int i = 0; i < max_retries; i++) {
             try {
                 auto futureResult = ExecAsync(PrepRes);
-                std::any result = futureResult.get();
-                if (result.has_value()) {
+                auto result = futureResult.get();
+                if (result) {
                     return result;
                 }
             }
@@ -58,14 +58,14 @@ std::any AsyncNode::exec(std::any &PrepRes) {
                 }
             }
         }
-        return {};
+        return nullptr;
     }).get();
 }
 
-std::any AsyncNode::run(std::any &shared) {
+std::shared_ptr<FrameworkData> AsyncNode::run(std::shared_ptr<FrameworkData> shared) {
     throw std::runtime_error("Use run_async instead of run for AsyncNode.");
 }
 
-std::any AsyncNode::Execute(std::any &shared) {
+std::shared_ptr<FrameworkData> AsyncNode::Execute(std::shared_ptr<FrameworkData> shared) {
     return RunAsync(shared).get();
 }

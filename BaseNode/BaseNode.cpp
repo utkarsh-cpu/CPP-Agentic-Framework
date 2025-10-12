@@ -2,8 +2,7 @@
 #include "ConditionalTransition.h"
 #include <iostream>
 
-
-void BaseNode::setParam(const std::map<std::string,std::any>& Param) {
+void BaseNode::setParam(const std::map<std::string, std::shared_ptr<FrameworkData>>& Param) {
     params = Param;
 }
 
@@ -15,29 +14,29 @@ std::shared_ptr<BaseNode> BaseNode::next(std::shared_ptr<BaseNode> Node,const st
     return Node;
 }
 
-std::any BaseNode::Prep(std::any &shared) {return {};}
-std::any BaseNode::Exec(std::any &PrepRes) {return {};}
+std::shared_ptr<FrameworkData> BaseNode::Prep(std::shared_ptr<FrameworkData> shared) {return nullptr;}
+std::shared_ptr<FrameworkData> BaseNode::Exec(std::shared_ptr<FrameworkData> PrepRes) {return nullptr;}
 
-std::any BaseNode::Post(std::any &shared, std::any &PrepRes, std::any &ExecRes) {return {};}
+std::shared_ptr<FrameworkData> BaseNode::Post(std::shared_ptr<FrameworkData> shared, std::shared_ptr<FrameworkData> PrepRes, std::shared_ptr<FrameworkData> ExecRes) {return nullptr;}
 
-std::any BaseNode::exec(std::any &PrepRes) {
+std::shared_ptr<FrameworkData> BaseNode::exec(std::shared_ptr<FrameworkData> PrepRes) {
     return Exec(PrepRes);
 }
 
-std::any BaseNode::run(std::any &shared) {
+std::shared_ptr<FrameworkData> BaseNode::run(std::shared_ptr<FrameworkData> shared) {
     auto PrepRes=Prep(shared);
     auto ExecRes=exec(PrepRes);
     return Post(shared,PrepRes,ExecRes);
 }
 
-std::any BaseNode::Run(std::any &shared) {
+std::shared_ptr<FrameworkData> BaseNode::Run(std::shared_ptr<FrameworkData> shared) {
     if(!successors.empty()){
         std::cerr<< "Warning: Node won't run successors. Use Flow.\n";
     }
     return run(shared);
 }
 
-std::any BaseNode::Execute(std::any &shared) {
+std::shared_ptr<FrameworkData> BaseNode::Execute(std::shared_ptr<FrameworkData> shared) {
     return Run(shared);
 }
 
