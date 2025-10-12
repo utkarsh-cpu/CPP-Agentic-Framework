@@ -13,7 +13,7 @@ protected:
 
 public:
     explicit Flow(std::shared_ptr<BaseNode> StartNode=nullptr);
-    virtual ~Flow() = default;
+    ~Flow() override = default;
 
     // Virtual methods for inheritance customization
     virtual std::shared_ptr<BaseNode> Start(std::shared_ptr<BaseNode> start);

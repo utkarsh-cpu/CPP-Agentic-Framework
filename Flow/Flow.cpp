@@ -36,9 +36,41 @@ std::any Flow::orch(std::any &shared, std::map<std::string, std::any> *Params) {
     const auto p= Params? *Params : this->params;
     std::string lastAction;
     while (curr) {
-        curr->setParam(p);
-        lastAction = std::any_cast<std::string>(curr->Run(shared));
-        curr=GetNextNode(curr,lastAction);
+        try {
+            curr->setParam(p);
+
+            // Get the result from the Run method
+            std::any runResult = curr->Run(shared);
+
+            // Safely cast to string with error checking
+            try {
+                lastAction = std::any_cast<std::string>(runResult);
+            } catch (const std::bad_any_cast& e) {
+                std::cerr << "Error: Run() did not return a string. Type: " << runResult.type().name() << std::endl;
+                // Try to handle different return types
+                if (runResult.type() == typeid(const char*)) {
+                    lastAction = std::any_cast<const char*>(runResult);
+                } else {
+                    std::cerr << "Cannot convert return type to string" << std::endl;
+                    return std::string("error");
+                }
+            }
+
+            // Check if curr is still valid before calling GetNextNode
+            if (!curr) {
+                std::cerr << "Current node became null during execution" << std::endl;
+                break;
+            }
+
+            curr = GetNextNode(curr, lastAction);
+
+        } catch (const std::exception& e) {
+            std::cerr << "Exception in Flow::orch: " << e.what() << std::endl;
+            return std::string("error");
+        } catch (...) {
+            std::cerr << "Unknown exception in Flow::orch" << std::endl;
+            return std::string("error");
+        }
     }
     return lastAction;
 }
