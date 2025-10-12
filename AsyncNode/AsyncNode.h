@@ -19,6 +19,7 @@ public:
     virtual std::future<std::any> ExecFallbackAsync(std::any& PrepRes,const std::exception& exc);
     virtual std::future<std::any> PostAsync(std::any& shared,std::any& PrepRes,std::any& ExecRes);
     virtual std::future<std::any> RunAsync(std::any& shared);
+    std::any Execute(std::any& shared) override;
 
 protected:
     // Protected virtual methods for derived class customization

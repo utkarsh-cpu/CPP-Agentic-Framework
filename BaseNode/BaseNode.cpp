@@ -1,14 +1,13 @@
 #include "BaseNode.h"
 #include "ConditionalTransition.h"
 #include <iostream>
-using namespace std;
 
 
-void BaseNode::setParam(map<string,any> Param) {
-    params = std::move(Param);
+void BaseNode::setParam(const std::map<std::string,std::any>& Param) {
+    params = Param;
 }
 
-shared_ptr<BaseNode> BaseNode::next(shared_ptr<BaseNode> Node,const string& Action) {
+std::shared_ptr<BaseNode> BaseNode::next(std::shared_ptr<BaseNode> Node,const std::string& Action) {
     if (successors.find(Action)!= successors.end()) {
         std::cerr<<"Warning:Overwritting successor for action '" << Action<<"'"<<std::endl;
     }
@@ -16,37 +15,41 @@ shared_ptr<BaseNode> BaseNode::next(shared_ptr<BaseNode> Node,const string& Acti
     return Node;
 }
 
-any BaseNode::Prep(any &shared) {return {};}
-any BaseNode::Exec(any &PrepRes) {return {};}
+std::any BaseNode::Prep(std::any &shared) {return {};}
+std::any BaseNode::Exec(std::any &PrepRes) {return {};}
 
-any BaseNode::Post(any &shared, any &PrepRes, any &ExecRes) {return {};}
+std::any BaseNode::Post(std::any &shared, std::any &PrepRes, std::any &ExecRes) {return {};}
 
-any BaseNode::exec(any &PrepRes) {
+std::any BaseNode::exec(std::any &PrepRes) {
     return Exec(PrepRes);
 }
 
-any BaseNode::run(any &shared) {
+std::any BaseNode::run(std::any &shared) {
     auto PrepRes=Prep(shared);
     auto ExecRes=exec(PrepRes);
     return Post(shared,PrepRes,ExecRes);
 }
 
-any BaseNode::Run(any &shared) {
+std::any BaseNode::Run(std::any &shared) {
     if(!successors.empty()){
-        cerr<< "Warning: Node won't run successors. Use Flow.\n";
+        std::cerr<< "Warning: Node won't run successors. Use Flow.\n";
     }
     return run(shared);
 }
 
-shared_ptr<BaseNode> BaseNode::operator>>(const std::shared_ptr<BaseNode> &other) {
+std::any BaseNode::Execute(std::any &shared) {
+    return Run(shared);
+}
+
+std::shared_ptr<BaseNode> BaseNode::operator>>(const std::shared_ptr<BaseNode> &other) {
     return next(other);
 }
 
 ConditionalTransition BaseNode::operator-(const std::string &action) {
-    return {this,action};
+    return {shared_from_this(),action};
 
 }
 
-map<string,shared_ptr<BaseNode>> BaseNode::getSuccessor() {
+std::map<std::string,std::shared_ptr<BaseNode>> BaseNode::getSuccessor() {
     return successors;
 }

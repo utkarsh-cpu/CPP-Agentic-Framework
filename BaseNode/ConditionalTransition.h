@@ -14,9 +14,9 @@ class BaseNode;
 class ConditionalTransition {
 
 public:
-    BaseNode* src;
+    std::shared_ptr<BaseNode> src;
     std::string action;
-    ConditionalTransition(BaseNode* s,std::string   a);
+    ConditionalTransition(std::shared_ptr<BaseNode> s,std::string   a);
     std::shared_ptr<BaseNode> operator>>(const std::shared_ptr<BaseNode>& tgt) const;
 
 };

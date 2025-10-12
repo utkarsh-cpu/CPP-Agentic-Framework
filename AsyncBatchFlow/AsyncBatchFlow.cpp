@@ -6,6 +6,7 @@
 
 std::future<std::any> AsyncBatchFlow::runAsync(std::any &shared) {
     return std::async(std::launch::async, [this,&shared]()-> std::any {
+        std::lock_guard<std::mutex> lock(shared_mutex);
         std::any Prep=PrepAsync(shared).get();
         if (!Prep.has_value() || Prep.type()!=typeid(std::vector<std::any>)) {
             std::any exec={};
@@ -16,8 +17,10 @@ std::future<std::any> AsyncBatchFlow::runAsync(std::any &shared) {
         futures.reserve(batch.size());
         for (auto&bp: batch) {
             std::map<string, std::any> Params= this->params;
-            auto extras=std::any_cast<std::map<std::string, std::any>>(bp);
-            Params.insert(extras.begin(), extras.end());
+            if (bp.has_value() && bp.type() == typeid(std::map<std::string, std::any>)) {
+                auto extras=std::any_cast<std::map<std::string, std::any>>(bp);
+                Params.insert(extras.begin(), extras.end());
+            }
             orchAsync(shared,&Params).get();
         }
         std::any ExecRes = nullptr;

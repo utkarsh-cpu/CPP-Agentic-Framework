@@ -43,7 +43,10 @@ std::any AsyncNode::exec(std::any &PrepRes) {
         for (int i = 0; i < max_retries; i++) {
             try {
                 auto futureResult = ExecAsync(PrepRes);
-                return futureResult.get();
+                std::any result = futureResult.get();
+                if (result.has_value()) {
+                    return result;
+                }
             }
             catch (const std::exception& e) {
                 if (i == max_retries - 1) {
@@ -61,4 +64,8 @@ std::any AsyncNode::exec(std::any &PrepRes) {
 
 std::any AsyncNode::run(std::any &shared) {
     throw std::runtime_error("Use run_async instead of run for AsyncNode.");
+}
+
+std::any AsyncNode::Execute(std::any &shared) {
+    return RunAsync(shared).get();
 }

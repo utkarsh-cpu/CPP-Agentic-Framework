@@ -9,7 +9,9 @@ A modern C++17 framework for building asynchronous, batch-processing, and workfl
 - **Batch Processing**: Handle collections of data efficiently
 - **Parallel Execution**: Run batch operations in parallel for improved performance
 - **Flow Management**: Create sophisticated workflows with conditional transitions
-- **Type-safe Operations**: Leverages modern C++20 features including `std::any` for flexible data handling
+- **Improved Type Safety**: Runtime checks for `std::any` to prevent type errors.
+- **Thread Safety**: Built-in mechanisms to prevent data races in concurrent operations.
+- **Robust Error Handling**: Enhanced error handling for asynchronous and type-casting operations.
 
 ## Core Components
 
@@ -155,13 +157,14 @@ std::future<std::any> result = parallelFlow->runAsync(batchData);
 
 ## Thread Safety
 
-- Async operations use `std::async` with `std::launch::async` policy
-- Parallel batch processing safely handles concurrent execution
-- Share
+- Async operations use `std::async` with `std::launch::async` policy.
+- A `std::mutex` is used in asynchronous flows to protect shared data from data races.
+- Parallel batch processing is designed to handle concurrent execution safely.
 
 ## Key Concepts
 ### Data Flow
-The framework uses for flexible data passing between nodes, allowing for type-safe operations while maintaining flexibility. `std::any`
+The framework uses `std::any` for flexible data passing between nodes. While `std::any` provides flexibility, runtime checks have been added to ensure type safety before casting.
+
 ### Execution Models
 1. **Synchronous**: Traditional blocking execution
 2. **Asynchronous**: Non-blocking execution using `std::future`
@@ -176,14 +179,10 @@ Flows manage the execution order of nodes through:
 
 ## Error Handling
 The framework provides clear error handling:
-- Async classes throw runtime errors when synchronous methods are called
-- Type checking for batch data validation
-- Future-based error propagation for async operations
-
-## Thread Safety
-- Async operations use with policy `std::async``std::launch::async`
-- Parallel batch processing safely handles concurrent execution
-- Shared data should be properly synchronized by the user
+- Async classes throw runtime errors when synchronous methods are called.
+- Type checks are performed before `std::any_cast` to prevent `std::bad_any_cast` exceptions.
+- The robustness of asynchronous operations has been improved by checking for valid results.
+- Future-based error propagation for async operations.
 
 ## Contributing
 This framework is designed to be extensible. You can:
@@ -195,6 +194,5 @@ This framework is designed to be extensible. You can:
 [[LICENSE](LICENSE)]
 ## Dependencies
 - Standard C++20 library
-- Threading support (, `<async>`) `<future>`
-- Type utilities (, `<typeinfo>`) `<any>`
-
+- Threading support (`<future>`, `<async>`, `<mutex>`)
+- Type utilities (`<any>`, `<typeinfo>`)

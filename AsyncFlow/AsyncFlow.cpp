@@ -6,17 +6,13 @@
 
 std::future<std::any> AsyncFlow::orchAsync(std::any &shared, const std::map<std::string, std::any> *Params) {
     return std::async(std::launch::async, [this,Params,&shared]()-> std::any {
+        std::lock_guard<std::mutex> lock(shared_mutex);
         auto curr = startNode;
         const auto p= Params? *Params : Flow::params;
         std::any lastAction;
         while (curr) {
             curr->setParam(p);
-            if (const auto async_node=dynamic_pointer_cast<AsyncNode>(curr)) {
-                lastAction = std::any_cast<std::string>(async_node->RunAsync(shared).get());
-            }
-            else {
-                lastAction=std::any_cast<std::string>(curr->Run(shared));
-            }
+            lastAction = curr->Execute(shared);
             curr=GetNextNode(curr,std::any_cast<std::string>(lastAction));
         }
         return lastAction;
@@ -25,6 +21,7 @@ std::future<std::any> AsyncFlow::orchAsync(std::any &shared, const std::map<std:
 
 std::future<std::any> AsyncFlow::runAsync(std::any &shared) {
     return std::async(std::launch::async, [this,&shared]()-> std::any {
+        std::lock_guard<std::mutex> lock(shared_mutex);
         std::any Prep=PrepAsync(shared).get();
         std::any Exec=orchAsync(shared).get();
         return PostAsync(shared,Prep,Exec).get();

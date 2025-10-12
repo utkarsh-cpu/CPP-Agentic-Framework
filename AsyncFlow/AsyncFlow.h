@@ -6,11 +6,13 @@
 #define ASYNCFLOW_H
 #include "../AsyncNode/AsyncNode.h"
 #include "../Flow/Flow.h"
+#include <mutex>
 
 
 class AsyncFlow: virtual public Flow, virtual public AsyncNode{
 protected:
     std::future<std::any> orchAsync(std::any& shared,const std::map<std::string,std::any>*Params=nullptr);
+    std::mutex shared_mutex;
 public:
     using Flow::Flow;
     using AsyncNode::AsyncNode;

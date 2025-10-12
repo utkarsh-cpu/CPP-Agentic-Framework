@@ -6,6 +6,7 @@
 
 std::future<std::any> AsyncParallelBatchFlow::runAsync(std::any &shared) {
     return std::async(std::launch::async, [this, &shared]() -> std::any {
+        std::lock_guard<std::mutex> lock(shared_mutex);
         std::any Prep = PrepAsync(shared).get();
         
         // Handle empty or invalid prep result
@@ -21,8 +22,10 @@ std::future<std::any> AsyncParallelBatchFlow::runAsync(std::any &shared) {
         // Launch all batch items in parallel (equivalent to asyncio.gather)
         for (auto& bp : batch) {
             std::map<std::string, std::any> Params = this->params;
-            auto extras = std::any_cast<std::map<std::string, std::any>>(bp);
-            Params.insert(extras.begin(), extras.end());
+            if (bp.has_value() && bp.type() == typeid(std::map<std::string, std::any>)) {
+                auto extras = std::any_cast<std::map<std::string, std::any>>(bp);
+                Params.insert(extras.begin(), extras.end());
+            }
             futures.push_back(orchAsync(shared, &Params));
         }
         
