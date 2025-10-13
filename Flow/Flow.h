@@ -6,6 +6,7 @@
 #define FLOW_H
 
 #include "../BaseNode/BaseNode.h"
+#include "../BaseNode/InputValidation.h"
 #include "StringData.h"
 
 class Flow: virtual public BaseNode {
@@ -18,9 +19,10 @@ public:
 
     // Virtual methods for inheritance customization
     virtual std::shared_ptr<BaseNode> Start(std::shared_ptr<BaseNode> start);
-    static std::shared_ptr<BaseNode> GetNextNode(const std::shared_ptr<BaseNode>& curr,const std::string &action);
+    [[nodiscard]] static std::shared_ptr<BaseNode> GetNextNode(const std::shared_ptr<BaseNode>& curr, std::string_view action);
     std::shared_ptr<FrameworkData> Post(std::shared_ptr<FrameworkData> shared, std::shared_ptr<FrameworkData> PrepRes, std::shared_ptr<FrameworkData> ExecRes) override;
     virtual std::shared_ptr<FrameworkData> orch(std::shared_ptr<FrameworkData> shared, const std::map<std::string, std::shared_ptr<FrameworkData>>& Params = {});
+    virtual std::shared_ptr<FrameworkData> orch(std::shared_ptr<FrameworkData> shared, std::map<std::string, std::shared_ptr<FrameworkData>>&& Params);
 
 protected:
     // Protected virtual method for derived class customization

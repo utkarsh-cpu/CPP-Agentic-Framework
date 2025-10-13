@@ -8,7 +8,7 @@ std::future<std::shared_ptr<FrameworkData>> AsyncFlow::orchAsync(std::shared_ptr
     return std::async(std::launch::async, [this,Params,shared]()-> std::shared_ptr<FrameworkData> {
         std::lock_guard<std::mutex> lock(shared_mutex);
         auto curr = startNode;
-        const auto& p = Params.empty() ? this->params : Params;
+        const auto& p = Params.empty() ? this->getParams() : Params;
         std::shared_ptr<FrameworkData> lastAction;
         while (curr) {
             curr->setParam(p);
@@ -34,11 +34,13 @@ std::future<std::shared_ptr<FrameworkData>> AsyncFlow::runAsync(std::shared_ptr<
 
 
 std::future<std::shared_ptr<FrameworkData>> AsyncFlow::PostAsync(std::shared_ptr<FrameworkData> shared,std::shared_ptr<FrameworkData> PrepRes,std::shared_ptr<FrameworkData> ExecRes) {
-    return std::async(std::launch::async, [this,ExecRes]()-> std::shared_ptr<FrameworkData> {
+    (void)shared; (void)PrepRes;
+    return std::async(std::launch::async, [ExecRes]()-> std::shared_ptr<FrameworkData> {
         return ExecRes;
     });
 }
 
 std::shared_ptr<FrameworkData> AsyncFlow::run(std::shared_ptr<FrameworkData> shared) {
+    (void)shared;
     throw std::runtime_error("Use run_async instead of run for AsyncFlow.");
 }

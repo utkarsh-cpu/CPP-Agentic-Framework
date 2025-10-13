@@ -6,9 +6,10 @@
 
 #include <thread>
 
-Node::Node(int max_retries, int wait) :max_retries(max_retries), wait(wait), cur_retry(0) {}
+Node::Node(int max_retries, int wait) : cur_retry(0), max_retries(max_retries), wait(wait) {}
 
-std::shared_ptr<FrameworkData> Node::exec_fallback(const std::shared_ptr<FrameworkData>& PrepRes, std::exception_ptr eptr) {
+std::shared_ptr<FrameworkData> Node::exec_fallback(const std::shared_ptr<FrameworkData>& PrepRes, std::exception_ptr eptr) const {
+    (void)PrepRes; // Suppress unused parameter warning
     std::rethrow_exception(eptr);
 }
 

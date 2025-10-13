@@ -6,11 +6,13 @@
 class TestNode : public Node {
 public:
     std::shared_ptr<FrameworkData> Exec(std::shared_ptr<FrameworkData> data) override {
+        (void)data; // Suppress unused parameter warning
         auto result = std::make_shared<StringData>();
         result->value = "success";
         return result;
     }
     std::shared_ptr<FrameworkData> Post(std::shared_ptr<FrameworkData> shared, std::shared_ptr<FrameworkData> PrepRes, std::shared_ptr<FrameworkData> ExecRes) override {
+        (void)shared; (void)PrepRes; // Suppress unused parameter warnings
         return ExecRes;
     }
 };
@@ -32,6 +34,7 @@ public:
     FailingNode(int fail_count) : fail_count(fail_count) {}
 
     std::shared_ptr<FrameworkData> Exec(std::shared_ptr<FrameworkData> data) override {
+        (void)data; // Suppress unused parameter warning
         if (current_count < fail_count) {
             current_count++;
             throw std::runtime_error("Failed");
@@ -41,6 +44,7 @@ public:
         return result;
     }
     std::shared_ptr<FrameworkData> Post(std::shared_ptr<FrameworkData> shared, std::shared_ptr<FrameworkData> PrepRes, std::shared_ptr<FrameworkData> ExecRes) override {
+        (void)shared; (void)PrepRes; // Suppress unused parameter warnings
         return ExecRes;
     }
 };

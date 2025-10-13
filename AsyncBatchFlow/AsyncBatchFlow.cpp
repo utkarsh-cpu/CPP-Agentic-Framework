@@ -14,7 +14,7 @@ std::future<std::shared_ptr<FrameworkData>> AsyncBatchFlow::runAsync(std::shared
             std::vector<std::future<std::shared_ptr<FrameworkData>>> futures;
             futures.reserve(vecData->value.size());
             for (const auto &bp:vecData->value) {
-                auto params = this->params;
+                auto params = this->getParams();
                 if (auto mapData = std::dynamic_pointer_cast<MapData>(bp)) {
                     params.insert(mapData->value.begin(), mapData->value.end());
                 }
@@ -28,6 +28,7 @@ std::future<std::shared_ptr<FrameworkData>> AsyncBatchFlow::runAsync(std::shared
 }
 
 std::shared_ptr<FrameworkData> AsyncBatchFlow::run(std::shared_ptr<FrameworkData> shared) {
+    (void)shared;
     throw std::runtime_error("Use run_async instead of run for AsyncBatchFlow.");
 }
 

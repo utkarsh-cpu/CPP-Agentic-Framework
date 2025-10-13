@@ -1,0 +1,143 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "default",
+            "displayName": "Default Configuration",
+            "description": "Default build configuration with high warnings",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/default",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "TREAT_WARNINGS_AS_ERRORS": "OFF"
+            }
+        },
+        {
+            "name": "debug",
+            "displayName": "Debug Configuration",
+            "description": "Debug build with all safety checks",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "TREAT_WARNINGS_AS_ERRORS": "ON"
+            }
+        },
+        {
+            "name": "sanitizers",
+            "displayName": "Sanitizers Configuration",
+            "description": "Debug build with AddressSanitizer and UBSanitizer",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/sanitizers",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "ENABLE_SANITIZERS": "ON",
+                "TREAT_WARNINGS_AS_ERRORS": "ON"
+            }
+        },
+        {
+            "name": "tsan",
+            "displayName": "ThreadSanitizer Configuration",
+            "description": "Debug build with ThreadSanitizer",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/tsan",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "ENABLE_THREAD_SANITIZER": "ON",
+                "TREAT_WARNINGS_AS_ERRORS": "ON"
+            }
+        },
+        {
+            "name": "static-analysis",
+            "displayName": "Static Analysis Configuration",
+            "description": "Build with static analysis tools enabled",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/static-analysis",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "ENABLE_STATIC_ANALYSIS": "ON",
+                "TREAT_WARNINGS_AS_ERRORS": "ON"
+            }
+        },
+        {
+            "name": "ci",
+            "displayName": "Continuous Integration Configuration",
+            "description": "Full CI build with all checks enabled",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/ci",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "ENABLE_SANITIZERS": "ON",
+                "ENABLE_STATIC_ANALYSIS": "ON",
+                "TREAT_WARNINGS_AS_ERRORS": "ON"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "default",
+            "configurePreset": "default",
+            "displayName": "Default Build"
+        },
+        {
+            "name": "debug",
+            "configurePreset": "debug",
+            "displayName": "Debug Build"
+        },
+        {
+            "name": "sanitizers",
+            "configurePreset": "sanitizers",
+            "displayName": "Build with Sanitizers"
+        },
+        {
+            "name": "tsan",
+            "configurePreset": "tsan",
+            "displayName": "Build with ThreadSanitizer"
+        },
+        {
+            "name": "static-analysis",
+            "configurePreset": "static-analysis",
+            "displayName": "Build with Static Analysis"
+        },
+        {
+            "name": "ci",
+            "configurePreset": "ci",
+            "displayName": "CI Build"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "default",
+            "configurePreset": "default",
+            "displayName": "Default Tests"
+        },
+        {
+            "name": "debug",
+            "configurePreset": "debug",
+            "displayName": "Debug Tests"
+        },
+        {
+            "name": "sanitizers",
+            "configurePreset": "sanitizers",
+            "displayName": "Tests with Sanitizers",
+            "environment": {
+                "ASAN_OPTIONS": "detect_leaks=1:abort_on_error=1",
+                "UBSAN_OPTIONS": "abort_on_error=1"
+            }
+        },
+        {
+            "name": "tsan",
+            "configurePreset": "tsan",
+            "displayName": "Tests with ThreadSanitizer",
+            "environment": {
+                "TSAN_OPTIONS": "abort_on_error=1"
+            }
+        }
+    ]
+}

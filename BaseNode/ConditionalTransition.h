@@ -12,13 +12,21 @@ class BaseNode;
 
 
 class ConditionalTransition {
-
 public:
     std::shared_ptr<BaseNode> src;
     std::string action;
-    ConditionalTransition(std::shared_ptr<BaseNode> s,std::string   a);
-    std::shared_ptr<BaseNode> operator>>(const std::shared_ptr<BaseNode>& tgt) const;
-
+    
+    ConditionalTransition(std::shared_ptr<BaseNode> s, std::string a);
+    
+    // Copy constructor and assignment
+    ConditionalTransition(const ConditionalTransition& other) = default;
+    ConditionalTransition& operator=(const ConditionalTransition& other) = default;
+    
+    // Move constructor and assignment
+    ConditionalTransition(ConditionalTransition&& other) noexcept = default;
+    ConditionalTransition& operator=(ConditionalTransition&& other) noexcept = default;
+    
+    [[nodiscard]] std::shared_ptr<BaseNode> operator>>(const std::shared_ptr<BaseNode>& tgt) const;
 };
 
 
